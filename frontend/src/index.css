@@ -1,16 +1,30 @@
 :root {
-  --accent: #0f766e;
-  --accent-strong: #115e59;
-  --accent-soft: #ccfbf1;
-  --accent-border: #99f6e4;
-  --bg: #f1f5f9;
-  --border: #dbe3ee;
-  --muted: #64748b;
-  --shadow: 0 14px 34px rgba(15, 23, 42, 0.08);
-  --surface: #ffffff;
-  --text: #334155;
-  --text-strong: #0f172a;
+  --bg: #0a0e1a;
+  --bg-elevated: #11182b;
+  --bg-elevated-2: #1a2440;
+  --surface: #141c33;
+  --border: rgba(255, 255, 255, 0.08);
+  --border-strong: rgba(255, 255, 255, 0.16);
+  --text: #e7ecf7;
+  --text-strong: #ffffff;
+  --muted: #8b97b8;
+  --green: #2dbe4e;
+  --green-glow: rgba(45, 190, 78, 0.35);
+  --blue: #2a4bd7;
+  --red: #e52a39;
+  --gold: #ffc72c;
+  --gold-glow: rgba(255, 199, 44, 0.4);
+  --accent: var(--green);
+  --accent-strong: #9cf2ae;
+  --accent-soft: rgba(45, 190, 78, 0.14);
+  --accent-border: rgba(45, 190, 78, 0.36);
+  --gradient-brand: linear-gradient(135deg, var(--green) 0%, var(--blue) 55%, var(--red) 100%);
+  --gradient-gold: linear-gradient(135deg, #ffe07a 0%, var(--gold) 50%, #e8a100 100%);
+  --shadow: 0 20px 50px rgba(0, 0, 0, 0.45);
+  --radius: 16px;
+  --display: "Bricolage Grotesque Variable", "Bricolage Grotesque", ui-sans-serif, system-ui, sans-serif;
   --sans: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --mono: "JetBrains Mono Variable", "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
 
   color: var(--text);
   background: var(--bg);
@@ -21,6 +35,22 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
+:root[data-theme="light"] {
+  --bg: #f5f7fb;
+  --bg-elevated: #ffffff;
+  --bg-elevated-2: #eef3fb;
+  --surface: #ffffff;
+  --border: rgba(15, 23, 42, 0.1);
+  --border-strong: rgba(15, 23, 42, 0.18);
+  --text: #334155;
+  --text-strong: #0f172a;
+  --muted: #64748b;
+  --accent-strong: #116530;
+  --accent-soft: rgba(45, 190, 78, 0.12);
+  --accent-border: rgba(45, 190, 78, 0.36);
+  --shadow: 0 18px 42px rgba(15, 23, 42, 0.12);
+}
+
 * {
   box-sizing: border-box;
 }
@@ -28,6 +58,29 @@
 body {
   margin: 0;
   min-width: 320px;
+  min-height: 100svh;
+  background:
+    radial-gradient(circle at 15% 12%, rgba(45, 190, 78, 0.16), transparent 30%),
+    radial-gradient(circle at 85% 8%, rgba(42, 75, 215, 0.18), transparent 28%),
+    linear-gradient(180deg, var(--bg) 0%, #070a13 100%);
+}
+
+:root[data-theme="light"] body {
+  background:
+    radial-gradient(circle at 15% 12%, rgba(45, 190, 78, 0.12), transparent 30%),
+    radial-gradient(circle at 85% 8%, rgba(42, 75, 215, 0.12), transparent 28%),
+    var(--bg);
+}
+
+body::before {
+  content: "";
+  inset: 0;
+  pointer-events: none;
+  position: fixed;
+  background:
+    repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.035) 0 1px, transparent 1px 96px),
+    repeating-linear-gradient(0deg, rgba(255, 255, 255, 0.025) 0 1px, transparent 1px 96px);
+  mask-image: linear-gradient(180deg, black, transparent 78%);
 }
 
 button,
@@ -46,16 +99,19 @@ h1,
 h2,
 h3 {
   color: var(--text-strong);
-  line-height: 1.08;
+  font-family: var(--display);
+  line-height: 1.02;
 }
 
 h1 {
-  font-size: clamp(2.4rem, 7vw, 4.8rem);
+  font-size: clamp(3rem, 8vw, 6.7rem);
+  font-weight: 850;
   letter-spacing: 0;
 }
 
 h2 {
-  font-size: clamp(1.35rem, 2vw, 1.8rem);
+  font-size: clamp(1.4rem, 2.4vw, 2rem);
+  font-weight: 800;
 }
 
 #root {

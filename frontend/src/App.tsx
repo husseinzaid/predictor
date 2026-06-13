@@ -1,4 +1,8 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, type CSSProperties } from "react";
+import confetti from "canvas-confetti";
+import clsx from "clsx";
+import { motion, useReducedMotion } from "framer-motion";
+import { Activity, CheckCircle2, DollarSign, Goal, History, Info, ListOrdered, Loader2, Medal, Moon, Sparkles, Sun, Trophy, TrendingUp, Users } from "lucide-react";
 import { getFactors, getTeams, simulate } from "./api/client";
 import type { Factor, GroupMatch, SimulateResponse, Team, WeightsMap } from "./types";
 import "./App.css";
@@ -21,6 +25,16 @@ function App() {
   const [loading, setLoading] = useState(false);
   const [initializing, setInitializing] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [theme, setTheme] = useState<"dark" | "light">(() => {
+    if (typeof window === "undefined") return "dark";
+    return window.localStorage.getItem("wc-theme") === "light" ? "light" : "dark";
+  });
+  const [simulationRun, setSimulationRun] = useState(0);
+
+  useEffect(() => {
+    document.documentElement.dataset.theme = theme;
+    window.localStorage.setItem("wc-theme", theme);
+  }, [theme]);
   const [openInfo, setOpenInfo] = useState<Set<string>>(new Set());
 
   useEffect(() => {
@@ -100,24 +114,12 @@ function App() {
     setResult(null);
   }
 
-  function handleRandomize() {
-    setWeights((current) =>
-      Object.fromEntries(
-        factors.map((factor) => [
-          factor.id,
-          isFactorEnabled(factor.id, enabled)
-            ? Math.round(Math.random() * 100)
-            : current[factor.id] ?? factor.default_weight,
-        ]),
-      ),
-    );
-  }
-
   async function handleSimulate() {
     setLoading(true);
     setError(null);
     try {
       setResult(await simulate(simulationWeights(factors, weights, enabled)));
+      setSimulationRun((current) => current + 1);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Simulation failed. Try again.");
     } finally {
@@ -127,19 +129,39 @@ function App() {
 
   return (
     <main className="app-shell">
-      <section className="hero">
-        <p className="eyebrow">World Cup Predictor</p>
+      <header className="top-bar">
+        <div className="brand-mark">
+          <span className="brand-icon"><Trophy size={18} /></span>
+          <span>WC2026 Predictor</span>
+        </div>
+        <button
+          className="theme-toggle"
+          onClick={() => setTheme((current) => (current === "dark" ? "light" : "dark"))}
+          type="button"
+        >
+          {theme === "dark" ? <Sun size={16} /> : <Moon size={16} />}
+          {theme === "dark" ? "Light" : "Dark"}
+        </button>
+      </header>
+
+      <motion.section
+        animate={{ opacity: 1, y: 0 }}
+        className="hero"
+        initial={{ opacity: 0, y: 16 }}
+        transition={{ duration: 0.45 }}
+      >
+        <p className="eyebrow">Night Match Simulator</p>
         <h1>Your formula. Your World Cup champion.</h1>
         <p className="hero-copy">
           Tune the football factors you believe in, run the bracket, and see who your model sends
           lifting the trophy.
         </p>
-      </section>
+      </motion.section>
 
       {error && <div className="notice error">{error}</div>}
 
       <section className="workspace" aria-label="Prediction controls and results">
-        <aside className="panel controls-panel">
+        <motion.aside animate={{ opacity: 1, x: 0 }} className="panel controls-panel" initial={{ opacity: 0, x: -16 }} transition={{ delay: 0.08, duration: 0.35 }}>
           <div className="section-heading">
             <div>
               <p className="eyebrow">Your formula</p>
@@ -152,17 +174,32 @@ function App() {
             <p className="empty-state">Loading factors...</p>
           ) : (
             <>
+              <div className="action-row controls-actions">
+                <button className="secondary-button ai-button" onClick={handleReset} type="button">
+                  <span className="ai-badge">AI</span>
+                  Recommended defaults
+                </button>
+                <button
+                  className="primary-button"
+                  disabled={loading || factors.length === 0 || totalWeight === 0}
+                  onClick={handleSimulate}
+                  type="button"
+                >
+                  {loading ? <><Loader2 className="spin-icon" size={16} /> Simulating...</> : <><Goal size={16} /> Simulate World Cup</>}
+                </button>
+              </div>
+
               <div className="slider-groups">
                 {Object.entries(factorsByCategory).map(([category, categoryFactors]) => (
                   <div className="factor-category" key={category}>
-                    <h3>{formatCategory(category)}</h3>
+                    <h3><CategoryIcon category={category} /> {formatCategory(category)}</h3>
                     {categoryFactors.map((factor) => {
                       const value = weights[factor.id] ?? factor.default_weight;
                       const factorEnabled = isFactorEnabled(factor.id, enabled);
                       const normalized = factorEnabled && totalWeight > 0 ? (value / totalWeight) * 100 : 0;
 
                       return (
-                        <div className={factorEnabled ? "factor-control" : "factor-control disabled"} key={factor.id}>
+                        <div className={clsx("factor-control", !factorEnabled && "disabled", isSoloFactor(factor.id, enabled) && "solo-active")} key={factor.id}>
                           <div className="factor-topline">
                             <div className="factor-heading">
                               <label className="factor-toggle">
@@ -193,7 +230,7 @@ function App() {
                             </div>
                             <div className="factor-actions">
                               <button className="solo-button" onClick={() => soloFactor(factor.id)} type="button">
-                                Solo
+                                <Sparkles size={12} /> Solo
                               </button>
                               <strong>{PERCENT_FORMATTER.format(normalized)}%</strong>
                             </div>
@@ -205,6 +242,7 @@ function App() {
                               max="100"
                               min="0"
                               onChange={(event) => updateWeight(factor.id, Number(event.target.value))}
+                              style={{ "--slider-fill": `${value}%` } as SliderStyle}
                               type="range"
                               value={value}
                             />
@@ -216,31 +254,13 @@ function App() {
                   </div>
                 ))}
               </div>
-
-              <div className="action-row">
-                <button className="secondary-button ai-button" onClick={handleReset} type="button">
-                  <span className="ai-badge">AI</span>
-                  Recommended defaults
-                </button>
-                <button className="secondary-button" onClick={handleRandomize} type="button">
-                  Randomize
-                </button>
-                <button
-                  className="primary-button"
-                  disabled={loading || factors.length === 0 || totalWeight === 0}
-                  onClick={handleSimulate}
-                  type="button"
-                >
-                  {loading ? "Simulating..." : "Simulate World Cup"}
-                </button>
-              </div>
             </>
           )}
-        </aside>
+        </motion.aside>
 
         <section className="results-panel">
           {result ? (
-            <Results result={result} teamsById={teamsById} champion={champion} />
+            <Results champion={champion} result={result} runId={simulationRun} teamsById={teamsById} />
           ) : (
             <div className="panel empty-results">
               <p className="eyebrow">Ready when you are</p>
@@ -261,11 +281,14 @@ function Results({
   result,
   teamsById,
   champion,
+  runId,
 }: {
   result: SimulateResponse;
   teamsById: Map<string, Team>;
   champion: TeamDisplay | null;
+  runId: number;
 }) {
+  const reduceMotion = useReducedMotion();
   const [showAllRankings, setShowAllRankings] = useState(false);
   const probabilityByTeam = useMemo(
     () => new Map(result.champion_probabilities.map((item) => [item.id, item.probability])),
@@ -273,8 +296,17 @@ function Results({
   );
   const visibleScores = showAllRankings ? result.team_scores : result.team_scores.slice(0, 12);
 
+  useEffect(() => {
+    if (!champion || reduceMotion) return;
+    const colors = ["#2dbe4e", "#2a4bd7", "#e52a39", "#ffc72c"];
+    confetti({ particleCount: 110, spread: 85, origin: { y: 0.28 }, colors });
+    confetti({ particleCount: 28, spread: 55, origin: { y: 0.28 }, shapes: [confetti.shapeFromText({ text: "*", scalar: 1.6 })], colors: ["#ffc72c"] });
+  }, [champion, reduceMotion, runId]);
+
   return (
-    <div className="results-stack">
+    <motion.div animate={{ opacity: 1, y: 0 }} className="results-stack" initial={{ opacity: 0, y: 18 }} transition={{ duration: reduceMotion ? 0 : 0.35 }}>
+      {champion && <ChampionReveal champion={champion} />}
+
       <section className="panel">
         <div className="section-heading compact">
           <div>
@@ -296,7 +328,7 @@ function Results({
                     title="Power Score is the weighted team strength from your enabled factors and slider values. It is the model's base rating before the tournament path is simulated."
                   >
                     Power Score
-                    <span aria-hidden="true" className="info-dot">i</span>
+                    <span aria-hidden="true" className="info-dot"><Info size={10} /></span>
                   </span>
                 </th>
                 <th>
@@ -305,7 +337,7 @@ function Results({
                     title="Champion % is the team's chance to win the tournament in the simulation, including group results, knockout matchups, scorelines, and penalty shootouts."
                   >
                     Champion %
-                    <span aria-hidden="true" className="info-dot">i</span>
+                    <span aria-hidden="true" className="info-dot"><Info size={10} /></span>
                   </span>
                 </th>
               </tr>
@@ -317,7 +349,7 @@ function Results({
                 const championPercent = (probabilityByTeam.get(score.id) ?? 0) * 100;
                 return (
                   <tr key={score.id}>
-                    <td>#{score.rank}</td>
+                    <td><RankBadge rank={score.rank} /></td>
                     <td>
                       <TeamName flag={team.flag} name={team.name} />
                     </td>
@@ -348,7 +380,7 @@ function Results({
         )}
       </section>
 
-      <section className="panel">
+      <section className="panel group-panel">
         <div className="section-heading compact">
           <div>
             <p className="eyebrow">Representative simulation</p>
@@ -357,7 +389,7 @@ function Results({
         </div>
         <div className="group-grid">
           {result.group_stage.map((group) => (
-            <article className="group-card" key={group.group}>
+            <article className="group-card" data-group={group.group} key={group.group}>
               <h3>Group {group.group}</h3>
               <GroupFixtures matches={group.matches} teamsById={teamsById} />
               <div className="table-wrap compact-table-wrap">
@@ -380,7 +412,7 @@ function Results({
                       const team = getTeamDisplay(standing.id, teamsById, standing.name);
                       return (
                         <tr className={standing.qualified ? "qualified" : undefined} key={standing.id}>
-                          <td className="standings-team"><TeamName flag={team.flag} name={team.name} /></td>
+                          <td className="standings-team">{standing.qualified && <CheckCircle2 className="qualified-icon" size={14} />}<TeamName flag={team.flag} name={team.name} /></td>
                           <td>{standing.played}</td>
                           <td>{standing.won}</td>
                           <td>{standing.drawn}</td>
@@ -439,7 +471,19 @@ function Results({
           ))}
         </div>
       </section>
-    </div>
+    </motion.div>
+  );
+}
+
+function ChampionReveal({ champion }: { champion: TeamDisplay }) {
+  return (
+    <motion.section animate={{ opacity: 1, scale: 1 }} className="champion-reveal" initial={{ opacity: 0, scale: 0.96 }} transition={{ duration: 0.35 }}>
+      <div className="champion-trophy"><Trophy size={30} /></div>
+      <div>
+        <p className="eyebrow">Champion Reveal</p>
+        <h2>{champion.flag} {champion.name}</h2>
+      </div>
+    </motion.section>
   );
 }
 
@@ -466,6 +510,27 @@ function GroupFixtures({ matches, teamsById }: { matches: GroupMatch[]; teamsByI
         </div>
       ))}
     </div>
+  );
+}
+
+function CategoryIcon({ category }: { category: string }) {
+  const iconProps = { size: 15, strokeWidth: 2.4 };
+  if (category === "form") return <Activity {...iconProps} />;
+  if (category === "ranking") return <ListOrdered {...iconProps} />;
+  if (category === "squad") return <Users {...iconProps} />;
+  if (category === "market") return <TrendingUp {...iconProps} />;
+  if (category === "history") return <History {...iconProps} />;
+  if (category === "fun") return <DollarSign {...iconProps} />;
+  return <Sparkles {...iconProps} />;
+}
+
+function RankBadge({ rank }: { rank: number }) {
+  const medalClass = rank === 1 ? "gold" : rank === 2 ? "silver" : rank === 3 ? "bronze" : undefined;
+  return (
+    <span className={clsx("rank-badge", medalClass)}>
+      {rank <= 3 && <Medal size={14} />}
+      #{rank}
+    </span>
   );
 }
 
@@ -501,6 +566,10 @@ function TeamSlot({
   );
 }
 
+type SliderStyle = CSSProperties & {
+  "--slider-fill": string;
+};
+
 type TeamDisplay = {
   flag: string;
   name: string;
@@ -524,6 +593,11 @@ function defaultEnabled(factors: Factor[]) {
 
 function isFactorEnabled(factorId: string, enabled: Record<string, boolean>) {
   return enabled[factorId] ?? true;
+}
+
+function isSoloFactor(factorId: string, enabled: Record<string, boolean>) {
+  const enabledIds = Object.entries(enabled).filter(([, value]) => value).map(([id]) => id);
+  return enabledIds.length === 1 && enabledIds[0] === factorId;
 }
 
 function simulationWeights(factors: Factor[], weights: WeightsMap, enabled: Record<string, boolean>): WeightsMap {
