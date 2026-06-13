@@ -1,0 +1,79 @@
+[
+  {
+    "id": "elo",
+    "label": "Elo Strength",
+    "description": "Long-run team strength from the World Football Elo Ratings, built up gradually over years of match results (with bigger swings for wins against strong opponents and competitive matches). Reflects sustained on-pitch performance by the national team itself, not the individual players' current club form.",
+    "category": "form",
+    "default_weight": 20
+  },
+  {
+    "id": "fifa_rank",
+    "label": "FIFA Ranking",
+    "description": "Official FIFA World Ranking points. Conceptually similar to Elo -- both are long-run, results-based ratings -- but FIFA uses its own formula and weights recent matches and competition importance (World Cup > friendly) more heavily. Usually tracks Elo closely, but can diverge for teams that play few official fixtures.",
+    "category": "ranking",
+    "default_weight": 15
+  },
+  {
+    "id": "squad_quality",
+    "label": "Squad Quality",
+    "description": "Average EA Sports FC 26 player rating across each squad's best ~26 eligible players right now. This is a snapshot of current individual talent at club level -- independent of how the national team itself has performed (a team can have world-class individual players but a poor national-team record, or vice versa).",
+    "category": "squad",
+    "default_weight": 15
+  },
+  {
+    "id": "league_strength",
+    "label": "League Strength",
+    "description": "Average strength (clubelo top-division rating) of the domestic leagues those same squad players currently play in week to week. Distinguishes a squad of players competing in the Premier League or La Liga from one whose players mostly play in weaker domestic leagues, even if their individual Squad Quality ratings are similar.",
+    "category": "squad",
+    "default_weight": 10
+  },
+  {
+    "id": "betting_odds",
+    "label": "Betting Market",
+    "description": "Implied win probability from bookmaker outright odds for the World Cup winner. A single number that aggregates everything the market is pricing in -- form, squad news, injuries, fixture difficulty -- independent of any of the other factors here.",
+    "category": "market",
+    "default_weight": 15
+  },
+  {
+    "id": "tournament_experience",
+    "label": "Tournament Experience",
+    "description": "World Cup pedigree: titles won, total appearances, and best -ever finish, combined into one score. Rewards teams with a track record of performing specifically at this tournament (big-game temperament, squad depth for a long run), regardless of their current form.",
+    "category": "history",
+    "default_weight": 10
+  },
+  {
+    "id": "home_advantage",
+    "label": "Home Continent Advantage",
+    "description": "Flat boost for teams from the host confederation (CONCACAF for 2026): shorter travel, familiar time zones and climate, and a larger home-region crowd. Applies equally to every CONCACAF team regardless of their other ratings.",
+    "category": "fun",
+    "default_weight": 5
+  },
+  {
+    "id": "gdp",
+    "label": "Economic Power (GDP)",
+    "description": "A 'fun' wildcard based on each country's total GDP -- no direct footballing basis, though wealthier football federations can invest more in facilities, youth academies and coaching. Deliberately uses *total* GDP rather than GDP per capita, so it rewards large economies rather than just rich-per-person ones (see Population for the other half of that story).",
+    "category": "fun",
+    "default_weight": 10
+  },
+  {
+    "id": "population",
+    "label": "Population",
+    "description": "Another 'fun' wildcard based on each country's total population -- a bigger pool of players to draw talent from, though obviously no guarantee of footballing success on its own. Pairs with the GDP factor: a country can score high on one, the other, both, or neither.",
+    "category": "fun",
+    "default_weight": 5
+  },
+  {
+    "id": "travel_distance",
+    "label": "Travel Burden",
+    "description": "How far a team has to travel between its assigned 2026 World Cup venues (group stage through the Round of 32, assuming it wins its group) -- shorter travel means less jet lag and more recovery time between matches. Unlike Home Continent Advantage, which is just a flat yes/no for the host confederation, this varies continuously based on each team's actual venue assignments.",
+    "category": "fun",
+    "default_weight": 5
+  },
+  {
+    "id": "heat_adaptation",
+    "label": "Heat Adaptation",
+    "description": "How used each squad is to playing in the heat: compares the average June-July temperature in the countries where each squad's club-league players normally ply their trade against the average June-July temperature across the 16 2026 World Cup host cities (which range from a cool ~18C in Vancouver and Mexico City to a sweltering ~30C in Monterrey, Houston, Dallas and Miami). Squads whose players are used to noticeably cooler club-league climates take a small penalty here; squads already accustomed to similar-or-hotter conditions are unaffected. Unlike Travel Burden, which is about distances between venues, this is purely about climate.",
+    "category": "fun",
+    "default_weight": 5
+  }
+]

@@ -1,0 +1,656 @@
+{
+  "weights_used": {
+    "elo": 0.1739,
+    "fifa_rank": 0.1304,
+    "squad_quality": 0.1304,
+    "league_strength": 0.087,
+    "betting_odds": 0.1304,
+    "tournament_experience": 0.087,
+    "home_advantage": 0.0435,
+    "gdp": 0.087,
+    "population": 0.0435,
+    "travel_distance": 0.0435,
+    "heat_adaptation": 0.0435
+  },
+  "team_scores": [
+    {
+      "id": "BRA",
+      "name": "Brazil",
+      "power_score": 0.7185,
+      "rank": 1
+    },
+    {
+      "id": "ARG",
+      "name": "Argentina",
+      "power_score": 0.7127,
+      "rank": 2
+    },
+    {
+      "id": "FRA",
+      "name": "France",
+      "power_score": 0.6926,
+      "rank": 3
+    },
+    {
+      "id": "ESP",
+      "name": "Spain",
+      "power_score": 0.6525,
+      "rank": 4
+    },
+    {
+      "id": "ENG",
+      "name": "England",
+      "power_score": 0.543,
+      "rank": 5
+    },
+    {
+      "id": "GER",
+      "name": "Germany",
+      "power_score": 0.5303,
+      "rank": 6
+    },
+    {
+      "id": "POR",
+      "name": "Portugal",
+      "power_score": 0.4673,
+      "rank": 7
+    },
+    {
+      "id": "ITA",
+      "name": "Italy",
+      "power_score": 0.424,
+      "rank": 8
+    },
+    {
+      "id": "USA",
+      "name": "United States",
+      "power_score": 0.3939,
+      "rank": 9
+    },
+    {
+      "id": "NED",
+      "name": "Netherlands",
+      "power_score": 0.3773,
+      "rank": 10
+    },
+    {
+      "id": "BEL",
+      "name": "Belgium",
+      "power_score": 0.3661,
+      "rank": 11
+    },
+    {
+      "id": "CRO",
+      "name": "Croatia",
+      "power_score": 0.3568,
+      "rank": 12
+    },
+    {
+      "id": "MEX",
+      "name": "Mexico",
+      "power_score": 0.29,
+      "rank": 13
+    },
+    {
+      "id": "MAR",
+      "name": "Morocco",
+      "power_score": 0.2307,
+      "rank": 14
+    },
+    {
+      "id": "JPN",
+      "name": "Japan",
+      "power_score": 0.1805,
+      "rank": 15
+    },
+    {
+      "id": "CAN",
+      "name": "Canada",
+      "power_score": 0.1076,
+      "rank": 16
+    }
+  ],
+  "champion_probabilities": [
+    {
+      "id": "BRA",
+      "name": "Brazil",
+      "probability": 0.3145
+    },
+    {
+      "id": "ARG",
+      "name": "Argentina",
+      "probability": 0.2705
+    },
+    {
+      "id": "FRA",
+      "name": "France",
+      "probability": 0.2325
+    },
+    {
+      "id": "ESP",
+      "name": "Spain",
+      "probability": 0.1235
+    },
+    {
+      "id": "ENG",
+      "name": "England",
+      "probability": 0.025
+    },
+    {
+      "id": "GER",
+      "name": "Germany",
+      "probability": 0.0175
+    },
+    {
+      "id": "POR",
+      "name": "Portugal",
+      "probability": 0.0115
+    },
+    {
+      "id": "USA",
+      "name": "United States",
+      "probability": 0.002
+    },
+    {
+      "id": "ITA",
+      "name": "Italy",
+      "probability": 0.002
+    },
+    {
+      "id": "CRO",
+      "name": "Croatia",
+      "probability": 0.0005
+    },
+    {
+      "id": "BEL",
+      "name": "Belgium",
+      "probability": 0.0005
+    }
+  ],
+  "group_stage": [
+    {
+      "group": "A",
+      "matches": [
+        {
+          "matchday": 1,
+          "home": "USA",
+          "away": "MEX",
+          "home_goals": 1,
+          "away_goals": 0
+        },
+        {
+          "matchday": 1,
+          "home": "JPN",
+          "away": "CRO",
+          "home_goals": 2,
+          "away_goals": 2
+        },
+        {
+          "matchday": 2,
+          "home": "USA",
+          "away": "JPN",
+          "home_goals": 2,
+          "away_goals": 1
+        },
+        {
+          "matchday": 2,
+          "home": "MEX",
+          "away": "CRO",
+          "home_goals": 2,
+          "away_goals": 2
+        },
+        {
+          "matchday": 3,
+          "home": "USA",
+          "away": "CRO",
+          "home_goals": 1,
+          "away_goals": 0
+        },
+        {
+          "matchday": 3,
+          "home": "MEX",
+          "away": "JPN",
+          "home_goals": 1,
+          "away_goals": 0
+        }
+      ],
+      "standings": [
+        {
+          "id": "USA",
+          "name": "United States",
+          "played": 3,
+          "won": 3,
+          "drawn": 0,
+          "lost": 0,
+          "goals_for": 4,
+          "goals_against": 1,
+          "goal_difference": 3,
+          "points": 9,
+          "qualified": true
+        },
+        {
+          "id": "MEX",
+          "name": "Mexico",
+          "played": 3,
+          "won": 1,
+          "drawn": 1,
+          "lost": 1,
+          "goals_for": 3,
+          "goals_against": 3,
+          "goal_difference": 0,
+          "points": 4,
+          "qualified": true
+        },
+        {
+          "id": "CRO",
+          "name": "Croatia",
+          "played": 3,
+          "won": 0,
+          "drawn": 2,
+          "lost": 1,
+          "goals_for": 4,
+          "goals_against": 5,
+          "goal_difference": -1,
+          "points": 2,
+          "qualified": false
+        },
+        {
+          "id": "JPN",
+          "name": "Japan",
+          "played": 3,
+          "won": 0,
+          "drawn": 1,
+          "lost": 2,
+          "goals_for": 3,
+          "goals_against": 5,
+          "goal_difference": -2,
+          "points": 1,
+          "qualified": false
+        }
+      ]
+    },
+    {
+      "group": "B",
+      "matches": [
+        {
+          "matchday": 1,
+          "home": "BRA",
+          "away": "POR",
+          "home_goals": 0,
+          "away_goals": 0
+        },
+        {
+          "matchday": 1,
+          "home": "MAR",
+          "away": "CAN",
+          "home_goals": 3,
+          "away_goals": 1
+        },
+        {
+          "matchday": 2,
+          "home": "BRA",
+          "away": "MAR",
+          "home_goals": 9,
+          "away_goals": 1
+        },
+        {
+          "matchday": 2,
+          "home": "POR",
+          "away": "CAN",
+          "home_goals": 3,
+          "away_goals": 0
+        },
+        {
+          "matchday": 3,
+          "home": "BRA",
+          "away": "CAN",
+          "home_goals": 3,
+          "away_goals": 0
+        },
+        {
+          "matchday": 3,
+          "home": "POR",
+          "away": "MAR",
+          "home_goals": 1,
+          "away_goals": 0
+        }
+      ],
+      "standings": [
+        {
+          "id": "BRA",
+          "name": "Brazil",
+          "played": 3,
+          "won": 2,
+          "drawn": 1,
+          "lost": 0,
+          "goals_for": 12,
+          "goals_against": 1,
+          "goal_difference": 11,
+          "points": 7,
+          "qualified": true
+        },
+        {
+          "id": "POR",
+          "name": "Portugal",
+          "played": 3,
+          "won": 2,
+          "drawn": 1,
+          "lost": 0,
+          "goals_for": 4,
+          "goals_against": 0,
+          "goal_difference": 4,
+          "points": 7,
+          "qualified": true
+        },
+        {
+          "id": "MAR",
+          "name": "Morocco",
+          "played": 3,
+          "won": 1,
+          "drawn": 0,
+          "lost": 2,
+          "goals_for": 4,
+          "goals_against": 11,
+          "goal_difference": -7,
+          "points": 3,
+          "qualified": false
+        },
+        {
+          "id": "CAN",
+          "name": "Canada",
+          "played": 3,
+          "won": 0,
+          "drawn": 0,
+          "lost": 3,
+          "goals_for": 1,
+          "goals_against": 9,
+          "goal_difference": -8,
+          "points": 0,
+          "qualified": false
+        }
+      ]
+    },
+    {
+      "group": "C",
+      "matches": [
+        {
+          "matchday": 1,
+          "home": "ARG",
+          "away": "ENG",
+          "home_goals": 3,
+          "away_goals": 3
+        },
+        {
+          "matchday": 1,
+          "home": "BEL",
+          "away": "ITA",
+          "home_goals": 2,
+          "away_goals": 2
+        },
+        {
+          "matchday": 2,
+          "home": "ARG",
+          "away": "BEL",
+          "home_goals": 0,
+          "away_goals": 0
+        },
+        {
+          "matchday": 2,
+          "home": "ENG",
+          "away": "ITA",
+          "home_goals": 1,
+          "away_goals": 0
+        },
+        {
+          "matchday": 3,
+          "home": "ARG",
+          "away": "ITA",
+          "home_goals": 1,
+          "away_goals": 2
+        },
+        {
+          "matchday": 3,
+          "home": "ENG",
+          "away": "BEL",
+          "home_goals": 3,
+          "away_goals": 0
+        }
+      ],
+      "standings": [
+        {
+          "id": "ENG",
+          "name": "England",
+          "played": 3,
+          "won": 2,
+          "drawn": 1,
+          "lost": 0,
+          "goals_for": 7,
+          "goals_against": 3,
+          "goal_difference": 4,
+          "points": 7,
+          "qualified": true
+        },
+        {
+          "id": "ITA",
+          "name": "Italy",
+          "played": 3,
+          "won": 1,
+          "drawn": 1,
+          "lost": 1,
+          "goals_for": 4,
+          "goals_against": 4,
+          "goal_difference": 0,
+          "points": 4,
+          "qualified": true
+        },
+        {
+          "id": "ARG",
+          "name": "Argentina",
+          "played": 3,
+          "won": 0,
+          "drawn": 2,
+          "lost": 1,
+          "goals_for": 4,
+          "goals_against": 5,
+          "goal_difference": -1,
+          "points": 2,
+          "qualified": false
+        },
+        {
+          "id": "BEL",
+          "name": "Belgium",
+          "played": 3,
+          "won": 0,
+          "drawn": 2,
+          "lost": 1,
+          "goals_for": 2,
+          "goals_against": 5,
+          "goal_difference": -3,
+          "points": 2,
+          "qualified": false
+        }
+      ]
+    },
+    {
+      "group": "D",
+      "matches": [
+        {
+          "matchday": 1,
+          "home": "FRA",
+          "away": "ESP",
+          "home_goals": 0,
+          "away_goals": 0
+        },
+        {
+          "matchday": 1,
+          "home": "GER",
+          "away": "NED",
+          "home_goals": 3,
+          "away_goals": 1
+        },
+        {
+          "matchday": 2,
+          "home": "FRA",
+          "away": "GER",
+          "home_goals": 0,
+          "away_goals": 2
+        },
+        {
+          "matchday": 2,
+          "home": "ESP",
+          "away": "NED",
+          "home_goals": 2,
+          "away_goals": 0
+        },
+        {
+          "matchday": 3,
+          "home": "FRA",
+          "away": "NED",
+          "home_goals": 0,
+          "away_goals": 0
+        },
+        {
+          "matchday": 3,
+          "home": "ESP",
+          "away": "GER",
+          "home_goals": 4,
+          "away_goals": 2
+        }
+      ],
+      "standings": [
+        {
+          "id": "ESP",
+          "name": "Spain",
+          "played": 3,
+          "won": 2,
+          "drawn": 1,
+          "lost": 0,
+          "goals_for": 6,
+          "goals_against": 2,
+          "goal_difference": 4,
+          "points": 7,
+          "qualified": true
+        },
+        {
+          "id": "GER",
+          "name": "Germany",
+          "played": 3,
+          "won": 2,
+          "drawn": 0,
+          "lost": 1,
+          "goals_for": 7,
+          "goals_against": 5,
+          "goal_difference": 2,
+          "points": 6,
+          "qualified": true
+        },
+        {
+          "id": "FRA",
+          "name": "France",
+          "played": 3,
+          "won": 0,
+          "drawn": 2,
+          "lost": 1,
+          "goals_for": 0,
+          "goals_against": 2,
+          "goal_difference": -2,
+          "points": 2,
+          "qualified": false
+        },
+        {
+          "id": "NED",
+          "name": "Netherlands",
+          "played": 3,
+          "won": 0,
+          "drawn": 1,
+          "lost": 2,
+          "goals_for": 1,
+          "goals_against": 5,
+          "goal_difference": -4,
+          "points": 1,
+          "qualified": false
+        }
+      ]
+    }
+  ],
+  "bracket": {
+    "rounds": [
+      {
+        "name": "Quarterfinals",
+        "matches": [
+          {
+            "home": "MEX",
+            "away": "POR",
+            "home_goals": 3,
+            "away_goals": 0,
+            "winner": "MEX",
+            "penalties": null
+          },
+          {
+            "home": "ENG",
+            "away": "GER",
+            "home_goals": 2,
+            "away_goals": 1,
+            "winner": "ENG",
+            "penalties": null
+          },
+          {
+            "home": "BRA",
+            "away": "ITA",
+            "home_goals": 2,
+            "away_goals": 0,
+            "winner": "BRA",
+            "penalties": null
+          },
+          {
+            "home": "ESP",
+            "away": "USA",
+            "home_goals": 3,
+            "away_goals": 0,
+            "winner": "ESP",
+            "penalties": null
+          }
+        ]
+      },
+      {
+        "name": "Semifinals",
+        "matches": [
+          {
+            "home": "MEX",
+            "away": "ENG",
+            "home_goals": 1,
+            "away_goals": 1,
+            "winner": "ENG",
+            "penalties": {
+              "home": 2,
+              "away": 5
+            }
+          },
+          {
+            "home": "BRA",
+            "away": "ESP",
+            "home_goals": 2,
+            "away_goals": 0,
+            "winner": "BRA",
+            "penalties": null
+          }
+        ]
+      },
+      {
+        "name": "Final",
+        "matches": [
+          {
+            "home": "ENG",
+            "away": "BRA",
+            "home_goals": 0,
+            "away_goals": 1,
+            "winner": "BRA",
+            "penalties": null
+          }
+        ]
+      }
+    ],
+    "champion": "BRA"
+  },
+  "explanation": "Brazil tops your bracket (31.4% of simulations) under the current weight mix."
+}
