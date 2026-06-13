@@ -9,9 +9,12 @@ both the 16-team mock (4 groups -> 8, no thirds needed) and the real
 
 Every group-stage and knockout match is scored (home_goals/away_goals),
 not just won/lost/drawn, so the response can drive a full fixture list.
-Goals are drawn from a Poisson distribution whose mean is derived from the
-two teams' power scores -- a higher power-score gap means a higher expected
-goal difference. Knockout draws go to a penalty shootout.
+Goals are drawn from a binomial distribution (SCORING_CHANCES chances, each
+converted independently) whose conversion rate is derived from the two
+teams' power scores -- a higher power-score gap means a higher expected
+goal difference. This has the same mean as a Poisson model but a hard
+ceiling and lower variance, so big underdogs only very rarely blow out a
+big favourite. Knockout draws go to a penalty shootout.
 """
 
 import math
@@ -26,6 +29,14 @@ LOGISTIC_K = 6.0
 BASE_GOALS = 1.35
 GOAL_SCALE = 2.2
 MAX_EXPECTED_GOALS = 6.0
+
+# Goals are sampled as "successes out of SCORING_CHANCES chances", each
+# converted independently with probability expected_goals / SCORING_CHANCES.
+# This binomial model has the same mean as a Poisson(expected_goals) draw
+# but a hard ceiling and lower variance, so a team with a low expected-goals
+# value only very rarely scores a large number of goals (vs. Poisson, whose
+# tail is unbounded and proportionally heavier for small means).
+SCORING_CHANCES = int(MAX_EXPECTED_GOALS)
 
 # Round-robin matchday assignment for a 4-team group, keyed by the (i, j)
 # index pair within `members` (i < j). World Cup groups are always 4 teams.
@@ -73,21 +84,28 @@ def _expected_goals(score_for: float, score_against: float) -> float:
     return min(BASE_GOALS * math.exp(GOAL_SCALE * diff), MAX_EXPECTED_GOALS)
 
 
-def _poisson_sample(rng: random.Random, lam: float) -> int:
-    """Knuth's algorithm -- fine for the small lambdas used here (~0-6)."""
-    threshold = math.exp(-lam)
-    k = 0
-    p = 1.0
-    while True:
-        k += 1
-        p *= rng.random()
-        if p <= threshold:
-            return k - 1
+def _binomial_sample(rng: random.Random, n: int, p: float) -> int:
+    """n independent chances, each converted with probability p."""
+    return sum(1 for _ in range(n) if rng.random() < p)
 
 
 def _simulate_score(score_a: float, score_b: float, rng: random.Random) -> Tuple[int, int]:
-    goals_a = _poisson_sample(rng, _expected_goals(score_a, score_b))
-    goals_b = _poisson_sample(rng, _expected_goals(score_b, score_a))
+    p_a = _expected_goals(score_a, score_b) / SCORING_CHANCES
+    p_b = _expected_goals(score_b, score_a) / SCORING_CHANCES
+    goals_a = _binomial_sample(rng, SCORING_CHANCES, p_a)
+    goals_b = _binomial_sample(rng, SCORING_CHANCES, p_b)
+    return goals_a, goals_b
+
+
+def _simulate_score_deterministic(score_a: float, score_b: float, rng: random.Random) -> Tuple[int, int]:
+    """Each side's expected goals, rounded to the nearest whole number.
+
+    No randomness: the same weights always produce the same scoreline, and
+    it always agrees with the power-score gap. Ties are real ties. `rng` is
+    unused -- kept so this is interchangeable with `_simulate_score`.
+    """
+    goals_a = int(_expected_goals(score_a, score_b) + 0.5)
+    goals_b = int(_expected_goals(score_b, score_a) + 0.5)
     return goals_a, goals_b
 
 
@@ -212,11 +230,41 @@ def _play_knockout_match(home: str, away: str, scores: Dict[str, float], rng: ra
     }
 
 
+def _play_knockout_match_deterministic(home: str, away: str, scores: Dict[str, float], rng: random.Random) -> dict:
+    """Deterministic counterpart to `_play_knockout_match`.
+
+    A drawn scoreline is settled by whichever side has the higher power
+    score (ties broken in the home side's favour), with a fixed penalty
+    scoreline -- there's no real-world calculation for a shootout, so this
+    just needs to produce *a* winner. `rng` is unused -- kept so this is
+    interchangeable with `_play_knockout_match`.
+    """
+    home_goals, away_goals = _simulate_score_deterministic(scores[home], scores[away], rng)
+    penalties = None
+    if home_goals == away_goals:
+        home_wins = scores[home] >= scores[away]
+        penalties = {"home": 4 if home_wins else 3, "away": 3 if home_wins else 4}
+        winner = home if home_wins else away
+    else:
+        winner = home if home_goals > away_goals else away
+
+    return {
+        "home": home,
+        "away": away,
+        "home_goals": home_goals,
+        "away_goals": away_goals,
+        "winner": winner,
+        "penalties": penalties,
+    }
+
+
 def _simulate_once(
     teams_by_id: Dict[str, dict],
     groups: Dict[str, List[str]],
     scores: Dict[str, float],
     rng: random.Random,
+    score_fn=_simulate_score,
+    knockout_fn=_play_knockout_match,
 ) -> Tuple[List[dict], List[dict], str]:
     standings: Dict[str, dict] = {tid: _new_standing_row() for tid in teams_by_id}
     group_matches: Dict[str, List[dict]] = {g: [] for g in groups}
@@ -225,7 +273,7 @@ def _simulate_once(
         for i in range(len(members)):
             for j in range(i + 1, len(members)):
                 home, away = members[i], members[j]
-                home_goals, away_goals = _simulate_score(scores[home], scores[away], rng)
+                home_goals, away_goals = score_fn(scores[home], scores[away], rng)
                 _record_result(standings, home, away, home_goals, away_goals)
                 matchday = MATCHDAY_FOR_PAIR_N4.get((i, j), 1) if len(members) == 4 else 1
                 group_matches[group_name].append({
@@ -295,7 +343,7 @@ def _simulate_once(
         matches = []
         next_round = []
         for i in range(0, len(current), 2):
-            match = _play_knockout_match(current[i], current[i + 1], scores, rng)
+            match = knockout_fn(current[i], current[i + 1], scores, rng)
             matches.append(match)
             next_round.append(match["winner"])
         bracket_rounds.append({"name": name, "matches": matches})
@@ -317,13 +365,21 @@ def run_simulation(
 
     rng = random.Random(seed)
     champion_counts = {tid: 0 for tid in teams_by_id}
-    rep_group_results = None
-    rep_bracket_rounds = None
-    for trial in range(trials):
-        group_results, bracket_rounds, champion = _simulate_once(teams_by_id, groups, scores, rng)
+    for _ in range(trials):
+        _, _, champion = _simulate_once(teams_by_id, groups, scores, rng)
         champion_counts[champion] += 1
-        if trial == 0:
-            rep_group_results, rep_bracket_rounds = group_results, bracket_rounds
+
+    # The displayed group stage and bracket use rounded expected goals --
+    # no randomness, so the same weights always produce the same result and
+    # it always agrees with the power-score ranking. The bracket *draw*
+    # (which qualifiers land in which half/match) still uses a seeded RNG,
+    # mirroring the random draw that decides real-world bracket pairings.
+    draw_rng = random.Random(seed)
+    rep_group_results, rep_bracket_rounds, _ = _simulate_once(
+        teams_by_id, groups, scores, draw_rng,
+        score_fn=_simulate_score_deterministic,
+        knockout_fn=_play_knockout_match_deterministic,
+    )
 
     champion_probabilities = sorted(
         (

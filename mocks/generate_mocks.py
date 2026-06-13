@@ -11,6 +11,7 @@ Run: python3 generate_mocks.py
 """
 
 import json
+import math
 import sys
 from pathlib import Path
 
@@ -226,6 +227,12 @@ def normalize(values, invert=False):
     return [(v - lo) / span for v in values]
 
 
+def log_normalize(values):
+    """Min-max normalize log10(values) -- mirrors build_team_table.py's
+    treatment of gdp/population, heavy-tailed order-of-magnitude factors."""
+    return normalize([math.log10(v) for v in values])
+
+
 def build_teams():
     ids = list(TEAMS_RAW.keys())
     fifa_ranks = [TEAMS_RAW[t][2] for t in ids]
@@ -245,8 +252,8 @@ def build_teams():
     norm_league = normalize(leagues)
     norm_odds = normalize(odds)
     norm_titles = [t / 5 for t in titles]
-    norm_gdp = normalize(gdps)
-    norm_population = normalize(populations)
+    norm_gdp = log_normalize(gdps)
+    norm_population = log_normalize(populations)
     norm_travel = normalize(travel_distances, invert=True)
     norm_heat = normalize(heat_disadvantages, invert=True)
 

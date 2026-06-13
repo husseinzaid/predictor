@@ -16,10 +16,15 @@ Per-factor handling:
     and best_finish (1=winner..8=never qualified, inverted so higher is
     better) into one score, then min-max normalized.
   - home_advantage: 1.0 for CONCACAF (2026 host confederation), else 0.0.
-  - gdp: min-max normalize `gdp_total_usd` (total national GDP, not
-    per-capita -- see fetch_gdp.py).
-  - population: min-max normalize `population` (total national population,
-    see fetch_population.py). A "fun" companion to gdp.
+  - gdp: log-scale min-max normalize `gdp_total_usd` (total national GDP,
+    not per-capita -- see fetch_gdp.py). GDP spans >4 orders of magnitude
+    across the pool (smallest to largest economy), so plain min-max
+    compresses all but the very largest economies into a narrow band near
+    0; normalizing log10(gdp) instead means each order-of-magnitude step
+    contributes comparably.
+  - population: log-scale min-max normalize `population` (total national
+    population, see fetch_population.py), for the same reason as gdp. A
+    "fun" companion to gdp.
   - squad_quality: min-max normalize `squad_avg_rating` (EA FC 26 overall
     rating, averaged over each team's top players by nationality).
   - league_strength: min-max normalize `league_strength_rating` (clubelo
@@ -226,6 +231,13 @@ def normalize(series: pd.Series) -> pd.Series:
     return (series - lo) / span
 
 
+def log_normalize(series: pd.Series) -> pd.Series:
+    """Min-max normalize log10(series) -- for heavy-tailed, order-of-magnitude
+    scale variables (gdp, population) where a plain min-max would let the
+    single largest value in the pool compress everyone else's gaps."""
+    return normalize(np.log10(series))
+
+
 def estimate_fifa_points(df: pd.DataFrame) -> pd.DataFrame:
     known = df.dropna(subset=["fifa_points"])
     slope, intercept = np.polyfit(known["elo_rating"], known["fifa_points"], 1)
@@ -263,8 +275,8 @@ def build() -> tuple[list[dict], list[dict]]:
     norm_elo = normalize(teams["elo_rating"])
     norm_fifa = normalize(teams["fifa_points"])
     norm_experience = normalize(teams["tournament_experience_raw"])
-    norm_gdp = normalize(teams["gdp_total_usd"])
-    norm_population = normalize(teams["population"])
+    norm_gdp = log_normalize(teams["gdp_total_usd"])
+    norm_population = log_normalize(teams["population"])
     norm_squad = normalize(teams["squad_avg_rating"])
     norm_league = normalize(teams["league_strength_rating"])
     norm_odds = normalize(teams["betting_implied_prob"])
