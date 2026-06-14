@@ -82,7 +82,10 @@ function App() {
     return new Map(teams.map((team) => [team.id, team]));
   }, [teams]);
 
-  const champion = result ? getTeamDisplay(result.bracket.champion, teamsById) : null;
+  const champion = useMemo(
+    () => (result ? getTeamDisplay(result.bracket.champion, teamsById) : null),
+    [result, teamsById],
+  );
 
   function updateWeight(factorId: string, value: number) {
     setWeights((current) => ({ ...current, [factorId]: value }));

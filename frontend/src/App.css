@@ -828,9 +828,14 @@ tr:last-child td {
   z-index: 10;
 }
 
-.factor-info:hover .factor-tooltip,
 .factor-tooltip.open {
   display: block;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .factor-info:hover .factor-tooltip {
+    display: block;
+  }
 }
 
 .slider-row input[type="range"] {
@@ -1136,5 +1141,24 @@ td {
   .champion-reveal {
     align-items: flex-start;
     flex-direction: column;
+  }
+
+  .controls-panel {
+    overflow: visible;
+  }
+
+  .factor-control {
+    position: relative;
+  }
+
+  .factor-info {
+    position: static;
+  }
+
+  .factor-tooltip {
+    left: 0;
+    right: 0;
+    top: calc(100% + 8px);
+    width: auto;
   }
 }
