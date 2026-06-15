@@ -3,6 +3,7 @@ __pycache__/
 *.pyc
 .venv/
 venv/
+backend/data_pipeline/refresh.log
 backend/data/raw/*
 backend/data/processed/*
 !backend/data/raw/.gitkeep
